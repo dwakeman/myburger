@@ -1,8 +1,8 @@
 {
-  "name": "template-node-react",
+  "name": "myburger",
   "version": "1.0.0",
-  "org": "yourorg",
-  "description": "12 UI Patterns written with React and Node.js",
+  "org": "IBM Technology Garage",
+  "description": "A burger builder demo app",
   "private": true,
   "engines": {
     "node": "^8.11.1"
@@ -27,7 +27,7 @@
     "test:coverage": "cd client && npm run test:coverage",
     "sonarqube:scan": "npm run test:coverage && node test/sonarqube-scan"
   },
-  "author": "IBM Garage for Cloud",
+  "author": "Dave Wakeman",
   "license": "ISC",
   "dependencies": {
     "client": "file:./client",
