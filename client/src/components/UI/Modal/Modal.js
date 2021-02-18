@@ -15,7 +15,7 @@ class Modal extends Component {
       Modal is actually visible.  The code below checks for that.
   */
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.show !== this.props.show;
+    return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
   }
 
   render() {

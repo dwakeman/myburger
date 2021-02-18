@@ -3,7 +3,7 @@ import React from 'react';
 import BuildControl from '../BuildControls/BuildControl/BuildControl';
 
 const controls = [
-  {label: 'Salad', type: 'salad'},
+  {label: 'Lettuce', type: 'lettuce'},
   {label: 'Meat', type: 'meat'},
   {label: 'Cheese', type: 'cheese'},
   {label: 'Bacon', type: 'bacon'}
