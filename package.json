@@ -30,8 +30,9 @@
   "author": "Dave Wakeman",
   "license": "ISC",
   "dependencies": {
-    "client": "file:./client",
+    "axios": "^0.21.1",
     "body-parser": "^1.17.2",
+    "client": "file:./client",
     "cookie-parser": "^1.4.3",
     "express": "^4.15.3",
     "express-http-proxy": "^1.6.0",
