@@ -10,11 +10,11 @@ describe('App', () => {
      expect(true).toEqual(true);
   });
 
-  // test('renders without crashing', () => {
-  //   const app = <BrowserRouter><App/></BrowserRouter>;
+  test('renders without crashing', () => {
+//    const app = <BrowserRouter><App /></BrowserRouter>;
 
-  //   const div = document.createElement('div');
-  //   ReactDOM.render(app, div);
-  //   ReactDOM.unmountComponentAtNode(div);
-  // });
+    const div = document.createElement('div');
+    ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });
