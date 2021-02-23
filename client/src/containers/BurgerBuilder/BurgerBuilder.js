@@ -119,36 +119,51 @@ class BurgerBuilder extends Component {
   purchaseContinueHandler = () => {
     console.log('[BurgerBuilder.js] purchaseContinueHandler');
 
-    this.setState({loading: true});
 
-    let newOrder = {
-      id: Math.round(Math.random() * 10000),
-      ingredients: this.state.ingredients,
-      totalPrice: this.state.totalPrice,
-      customer: {
-        name: 'Dave Wakeman',
-        address: {
-          street: 'Mockingbird Lane',
-          zipCode: 50323,
-          state: 'IA'
-        },
-        email: 'dwakeman@us.ibm.com'
-      },
-      deliveryMethod: 'fastest'
-    };
+    // let params = '?lettuce=' + this.state.ingredients.lettuce;
+    // params += '&meat=' + this.state.ingredients.meat;
+    // params += '&cheese=' + this.state.ingredients.cheese;
+    // params += '&bacon=' + this.state.ingredients.bacon;
 
-    firebase.post('/orders.json',newOrder) //baseURL is defined in index.js
-    .then(response => {
-      console.log('POST response from firebase', response);
-      this.setState({loading: false, purchasing: false});
-      //alert('Your order has been placed!');
-    })
-    .catch(error => {
-      console.log('Error from POST to firebase...', error);
-      this.setState({loading: false, purchasing: false});
-//      this.setState({errorMsg: 'Error adding post: ' + error});
-//          alert('The POST didn\`t work!!');
-    });
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+    }
+
+    queryParams.push('price=' +  this.state.totalPrice);
+    const queryString=queryParams.join('&');
+    this.props.history.push({pathname: '/checkout', search: queryString});
+    //this.setState({loading: true});
+
+
+//     let newOrder = {
+//       id: Math.round(Math.random() * 10000),
+//       ingredients: this.state.ingredients,
+//       totalPrice: this.state.totalPrice,
+//       customer: {
+//         name: 'Dave Wakeman',
+//         address: {
+//           street: 'Mockingbird Lane',
+//           zipCode: 50323,
+//           state: 'IA'
+//         },
+//         email: 'dwakeman@us.ibm.com'
+//       },
+//       deliveryMethod: 'fastest'
+//     };
+
+//     firebase.post('/orders.json',newOrder) //baseURL is defined in index.js
+//     .then(response => {
+//       console.log('POST response from firebase', response);
+//       this.setState({loading: false, purchasing: false});
+//       //alert('Your order has been placed!');
+//     })
+//     .catch(error => {
+//       console.log('Error from POST to firebase...', error);
+//       this.setState({loading: false, purchasing: false});
+// //      this.setState({errorMsg: 'Error adding post: ' + error});
+// //          alert('The POST didn\`t work!!');
+//     });
 
   }
 
