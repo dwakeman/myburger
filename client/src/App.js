@@ -8,6 +8,7 @@ import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 import { connect } from 'react-redux';
 import * as actions from './store/actions/index';
+import axios from 'axios';
 
 class App extends Component {
 
@@ -26,10 +27,28 @@ class App extends Component {
         Redux state?  I think it is only needed for initial authentication, so perhaps it can be in the local state of
         the Auth.js container.
     */
-    const firebaseApiKey = process.env.REACT_APP_FIREBASE_APIKEY;
-    console.log('[App.js] componentDidMount REACT_APP_FIREBASE_APIKEY=' + firebaseApiKey);
+    //console.log('[App.js] componentDidMount REACT_APP_FIREBASE_APIKEY=' + firebaseApiKey);
     console.log('[App.js] componentDidMount and NODE_ENV=' + process.env.NODE_ENV);
   
+    let firebaseApiKey = localStorage.getItem('firebaseApiKey');
+
+    if (firebaseApiKey === null) {
+      if (process.env.NODE_ENV === 'development') {
+        localStorage.setItem('firebaseApiKey', process.env.REACT_APP_FIREBASE_APIKEY);
+      } else {
+        axios.get(window.href + '/config')
+          .then(response => {
+            localStorage.setItem('firebaseApiKey', response.firebaseApiKey);
+          })
+          .catch(error => {
+            console.log('[App.js] axios error', error);
+          })
+      }
+    }
+  
+
+
+
   }
   render() {
 
