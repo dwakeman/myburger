@@ -25,7 +25,7 @@ describe('App', () => {
       auth: authReducer
     })
 
-    const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger, thunk)));
+    const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
     const div = document.createElement('div');
     ReactDOM.render(<Provider store={store}><BrowserRouter><App /></BrowserRouter></Provider>, div);
