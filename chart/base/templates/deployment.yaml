@@ -61,6 +61,11 @@ spec:
               value: ""
             - name: LOG_LEVEL
               value: {{ .Values.logLevel | quote }}
+            - name: FIREBASE_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: firebase-access
+                  key: apiKey
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
