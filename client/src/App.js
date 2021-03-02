@@ -38,7 +38,8 @@ class App extends Component {
       } else {
         axios.get(window.href + '/config')
           .then(response => {
-            localStorage.setItem('firebaseApiKey', response.firebaseApiKey);
+            console.log('[App.js] componentDidMount', response);
+            localStorage.setItem('firebaseApiKey', response.data.firebaseApiKey);
           })
           .catch(error => {
             console.log('[App.js] axios error', error);
