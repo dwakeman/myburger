@@ -40,6 +40,12 @@ require("./services/index")(app);
 require("./routers/index")(app, server);
 
 // Add your code here
+app.get('/config', function(req, res) {
+  res.json({
+    firebaseApiKey: process.env.FIREBASE_APIKEY || localConfig.firebaseApiKey
+  })
+})
+
 
 const port = process.env.PORT || localConfig.port;
 server.listen(port, function() {

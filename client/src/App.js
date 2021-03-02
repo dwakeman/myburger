@@ -13,6 +13,23 @@ class App extends Component {
 
   componentDidMount() {
     this.props.onTryAutoSignup();
+    console.log('[App.js] componentDidMount', window.location);
+    /*
+        Note: the code below does work to retrieve data from an environment variable.  However, this is NOT
+        a good idea for secret data like API Keys, as they aren't really retrieved at runtime from the environment.
+        They are compiled into the static code at BUILD time, and will be visible in the code in the browser tools!
+
+        So what's the best way for a React app to retrieve data that is stored in a kubernetes secret?  My next 
+        attempt will be to add a new API call to the node.js app that serves up the react app to read the data from
+        an environment variable that IS read from the kubernetes secret.  It can get the data from the variable and
+        return it via the API call to the React app.  The React app will call the API here and store it...where?  The
+        Redux state?  I think it is only needed for initial authentication, so perhaps it can be in the local state of
+        the Auth.js container.
+    */
+    const firebaseApiKey = process.env.REACT_APP_FIREBASE_APIKEY;
+    console.log('[App.js] componentDidMount REACT_APP_FIREBASE_APIKEY=' + firebaseApiKey);
+    console.log('[App.js] componentDidMount and NODE_ENV=' + process.env.NODE_ENV);
+  
   }
   render() {
 
