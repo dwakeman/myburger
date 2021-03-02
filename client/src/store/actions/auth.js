@@ -1,6 +1,7 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
+
 export const authStart = () => {
   return {
     type: actionTypes.AUTH_START
@@ -48,9 +49,10 @@ export const auth = (email, password, isSignup) => {
       returnSecureToken: true
     }
 
-    let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDokLKBc3Nm2O_j2o064hVTt3Mu7LIxQjM';
+    const apiKey = localStorage.getItem('firebaseApiKey');
+    let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + apiKey;
     if (!isSignup) {
-      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDokLKBc3Nm2O_j2o064hVTt3Mu7LIxQjM'
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + apiKey;
     };
 
     console.log('[auth.js] auth action url: ' + url);

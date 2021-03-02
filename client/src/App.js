@@ -36,7 +36,7 @@ class App extends Component {
       if (process.env.NODE_ENV === 'development') {
         localStorage.setItem('firebaseApiKey', process.env.REACT_APP_FIREBASE_APIKEY);
       } else {
-        axios.get(window.href + '/config')
+        axios.get(window.location.href + '/config')
           .then(response => {
             console.log('[App.js] componentDidMount', response);
             localStorage.setItem('firebaseApiKey', response.data.firebaseApiKey);
