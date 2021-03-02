@@ -10,7 +10,7 @@ class OrderSummary extends Component {
       remove that method this component could be converted back to a functional component.
   */
   componentDidUpdate() {
-    console.log('[OrderSummary.js] componentDidUpdate');
+    //console.log('[OrderSummary.js] componentDidUpdate');
   }
 
   render() {

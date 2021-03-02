@@ -6,7 +6,7 @@ import Backdrop from '../Backdrop/Backdrop';
 class Modal extends Component {
 
   componentDidUpdate() {
-    console.log('[Modal.js] componentDidUpdate');
+    //console.log('[Modal.js] componentDidUpdate');
   }
   /*
       Use of shouldComponentUpdate here in the Modal controls update of all

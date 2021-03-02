@@ -3,20 +3,105 @@ import classes from './ContactData.module.css';
 import Button from '../../../components/UI/Button/Button';
 import firebase from '../../../firebase';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import { withRouter } from 'react-router-dom';
+import Input from '../../../components/UI/Input/Input';
+//import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import * as actionCreators from '../../../store/actions/index';
 
 class ContactData extends Component {
 
   //console.log('[ContactData.js] props: ', props)
 
   state = {
-    name: '',
-    email: '',
-    address: {
-      street: '',
-      postalCode: ''
+    orderForm: {
+      name: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Your Name',
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      street: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Street',
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      zipCode: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'ZIP Code',
+        },
+        value: '',
+        validation: {
+          required: true,
+          minLength: 5,
+          maxLength: 5,
+          isNumeric: true
+        },
+        valid: false,
+        touched: false
+      },
+      country: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Country',
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      email: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'email',
+          placeholder: 'Email',
+        },
+        value: '',
+        validation: {
+          required: true,
+          isEmail: true
+        },
+        valid: false,
+        touched: false
+      },
+      deliveryMethod: {
+        elementType: 'select',
+        elementConfig: {
+          options: [
+            {value: '', displayValue: ''},
+            {value: 'fastest', displayValue: 'Fastest'},
+            {value: 'cheapest', displayValue: 'Cheapest'}
+          ],
+          placeholder: 'Delivery Method'
+        },
+        value: 'cheapest',
+        validation: {},
+        valid: true
+      }
     },
+    formIsValid: false,
     loading: false
+    
   }
 
   componentDidMount() {
@@ -32,52 +117,119 @@ class ContactData extends Component {
     */
     event.preventDefault();
     console.log('[ContactData.js] orderHandler', this.props);
-    this.setState({loading: true});
+    //this.setState({loading: true});
+
+    const formData ={};
+    for (let formElementIdentifier in this.state.orderForm) {
+      formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+    }
+
     let newOrder = {
       id: Math.round(Math.random() * 10000),
-      ingredients: this.props.ingredients,
-      totalPrice: this.props.price,
-      customer: {
-        name: 'Dave Wakeman',
-        address: {
-          street: 'Mockingbird Lane',
-          zipCode: 50323,
-          state: 'IA'
-        },
-        email: 'dwakeman@us.ibm.com'
-      },
-      deliveryMethod: 'fastest'
+      ingredients: this.props.ings,
+      totalPrice: Number.parseFloat(this.props.price).toFixed(2),
+      orderData: formData,
+      userId: this.props.userId
+
+    };
+    
+    this.props.onOrderBurger(newOrder, this.props.token);
+  }
+
+  checkValidity(value, rules) {
+    let isValid = true;
+    if (!rules) {
+        return true;
+    }
+    
+    if (rules.required) {
+        isValid = value.trim() !== '' && isValid;
+    }
+
+    if (rules.minLength) {
+        isValid = value.length >= rules.minLength && isValid
+    }
+
+    if (rules.maxLength) {
+        isValid = value.length <= rules.maxLength && isValid
+    }
+
+    if (rules.isEmail) {
+        const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        isValid = pattern.test(value) && isValid
+    }
+
+    if (rules.isNumeric) {
+        const pattern = /^\d+$/;
+        isValid = pattern.test(value) && isValid
+    }
+
+    return isValid;
+  }
+
+  // inputIdentifier is the key that needs to be updated in the object in the state
+  inputChangedHandler (event, inputIdentifier)  {
+    //console.log(event.target.value, inputIdentifier);
+
+
+    // Need to get a new copy of the orderForm object
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    }
+
+    // Since orderForm has nested objects we also need to get a copy of the one we want to update
+    const updatedFormElement = {
+      ...updatedOrderForm[inputIdentifier]
     };
 
-    firebase.post('/orders.json',newOrder) //baseURL is defined in index.js
-    .then(response => {
-      console.log('POST response from firebase', response);
-      this.setState({loading: false});
-      alert('Your order has been placed!');
-      this.props.history.push('/');
-    })
-    .catch(error => {
-      console.log('Error from POST to firebase...', error);
-      this.setState({loading: false});
-  //      this.setState({errorMsg: 'Error adding post: ' + error});
-  //          alert('The POST didn\`t work!!');
-    });
+    // Update the cloned object with the data from the form and update the state
+    updatedFormElement.value = event.target.value;
+    updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+    updatedFormElement.touched = true;
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+    //console.log('[ContactData.js] inputChangedHandler',updatedFormElement);
+
+    let formIsValid = true;
+    for (let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+    }
+
+    this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
   }
 
   render() {
 
+    let formElementsArray = [];
+
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    }
+    //console.log('[ContactData.js] formElementsArray', formElementsArray);
+
     let form = (
-      <form>
-        <input className={classes.Input} type="text" name="name" placeholder="Your Name" />
-        <input className={classes.Input} type="email" name="email" placeholder="Your Email" />
-        <input className={classes.Input} type="text" name="street" placeholder="Street" />
-        <input className={classes.Input} type="text" name="postalCode" placeholder="Postal Code" />
-        <Button clicked={this.orderHandler} btnType="Success">ORDER</Button>
+      <form onSubmit={this.orderHandler}>
+        {formElementsArray.map(formElement => (
+          <Input 
+            key={formElement.id}
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+            label={formElement.config.elementConfig.placeholder}
+            invalid = {!formElement.config.valid}
+            shouldValidate={formElement.config.validation}
+            touched={formElement.config.touched}
+            changed={(event) => this.inputChangedHandler(event,formElement.id)}
+          />
+        ))}
+        <Button clicked={this.orderHandler} btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
       </form>
     )
 
-
-    if (this.state.loading) {
+    // needs to be updated
+    if (this.props.loading) {
       form=(<Spinner>Loading...</Spinner>)
     }
 
@@ -91,4 +243,20 @@ class ContactData extends Component {
 
 }
 
-export default withRouter(ContactData);
+const mapStateToProps = state => {
+  return {
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    loading: state.order.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onOrderBurger: (orderData, token) => dispatch(actionCreators.purchaseBurger(orderData, token))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, firebase));

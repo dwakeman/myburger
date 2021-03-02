@@ -2,48 +2,49 @@ import React, { Component } from 'react';
 import Order from '../Orders/Order/Order';
 import firebase from '../../firebase';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import * as actions from '../../store/actions/index';
+import { connect } from 'react-redux';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 class Orders extends Component {
 
-  state = {
-    orders: [],
-    loading: true
-  }
-
   componentDidMount() {
-    firebase.get('/orders.json')
-      .then(response => {
-        console.log('[Orders.js] componentDidMount', response);
-        let fetchedOrders = [];
-        for (let key in response.data) {
-          fetchedOrders.push({
-            ...response.data[key],
-            id: key
-          });
-        }
+    this.props.onFetchOrders(this.props.token, this.props.userId);
 
-        this.setState({loading: false, orders: fetchedOrders});
-      })
-      .catch(error => {
-        this.setState({loading: false, error: true});
-        console.log('[Orders.js] componentDidMount Axios error', error);
-      })
   }
-
-
 
   render() {
 
+    let orders = <Spinner />;
+
+    if (!this.props.loading) {
+      orders = this.props.orders.map(order => (
+        <Order key={order.id} order={order} />
+      ))
+    };
 
     return (
       <div>
         <h1 style={{textAlign: 'center'}}>Your Orders:</h1>
-        {this.state.orders.map(order => (
-          <Order key={order.id} order={order} />
-        ))}
+        {orders}
       </div>
     )
   }
 }
 
-export default withErrorHandler(Orders, firebase);
+const mapStateToProps = state => {
+  return {
+    orders: state.order.orders,
+    loading: state.order.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchOrders: (token, userId) => dispatch(actions.fetchOrders(token, userId))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, firebase));

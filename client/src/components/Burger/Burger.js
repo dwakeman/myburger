@@ -31,7 +31,7 @@ const burger = ( props ) => {
   let transformedIngredients = Object.keys(props.ingredients)
     .map(
       (igKey => {
-        console.log('Burger.js] igKey = ' + igKey,[...Array(props.ingredients[igKey])]);
+        //console.log('Burger.js] igKey = ' + igKey,[...Array(props.ingredients[igKey])]);
         return [...Array(props.ingredients[igKey])].map((_, i) => {
           return <BurgerIngredient key={igKey + i} type={igKey} />
         })
@@ -41,7 +41,7 @@ const burger = ( props ) => {
       return arr.concat(el);
     },[]);
 
-    console.log('[Burger.js] transformed ingredients:',transformedIngredients);
+    //console.log('[Burger.js] transformed ingredients:',transformedIngredients);
 
     if (transformedIngredients.length === 0 ) {
       transformedIngredients = <p>Please start adding your ingredients!</p>
@@ -54,10 +54,6 @@ const burger = ( props ) => {
         <BurgerIngredient type='bread-bottom'/>
       </div>
     );
-
-    
-
-
 }
 
 export default burger;
